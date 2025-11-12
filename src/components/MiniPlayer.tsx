@@ -16,6 +16,7 @@ import {
   pauseSession,
   resumeSession,
   stopStep,
+  tickSecond,
 } from "../store/sessionSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "./ToastProvider";
@@ -28,10 +29,51 @@ export default function MiniPlayer() {
   const location = useLocation();
   const { showToast } = useToast();
   const liveRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<number | null>(null);
 
   const activeId = session.activeRecipeId;
   const by = activeId ? session.byRecipeId[activeId] : undefined;
   const recipe = activeId ? recipes.find((r) => r.id === activeId) : undefined;
+
+  // ✅ keep ticking in background
+  useEffect(() => {
+    if (!activeId || !by?.isRunning) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    if (!intervalRef.current) {
+      intervalRef.current = window.setInterval(() => {
+        dispatch(tickSecond({ recipeId: activeId, nowTs: Date.now() }) as any);
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [activeId, by?.isRunning]);
+
+  // keyboard shortcuts
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        handleToggle();
+      }
+      if (e.code === "KeyS") {
+        e.preventDefault();
+        handleStop();
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
 
   if (!activeId || !recipe) return null;
   if (location.pathname === `/cook/${activeId}`) return null;
@@ -68,22 +110,6 @@ export default function MiniPlayer() {
     if (liveRef.current) liveRef.current.textContent = "Step ended";
   };
 
-  // keyboard shortcuts
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.code === "Space") {
-        e.preventDefault();
-        handleToggle();
-      }
-      if (e.code === "KeyS") {
-        e.preventDefault();
-        handleStop();
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  });
-
   return (
     <Grow in={true}>
       <Paper
@@ -114,7 +140,6 @@ export default function MiniPlayer() {
         role="region"
         aria-label={`Active cooking session for ${recipe.title}`}
       >
-        {/* Text Info */}
         <Box sx={{ flex: 1, overflow: "hidden" }}>
           <Typography
             variant="subtitle1"
@@ -130,8 +155,7 @@ export default function MiniPlayer() {
           </Typography>
         </Box>
 
-        {/* Progress Ring */}
-        <Box sx={{ position: "relative", display: "flex", alignItems: "center" }}>
+        <Box sx={{ position: "relative", display: "flex", alignItems: "center"  }}>
           <CircularProgress
             size={46}
             thickness={5}
@@ -146,6 +170,7 @@ export default function MiniPlayer() {
             variant="caption"
             sx={{
               position: "absolute",
+              left:"30%",
               color: "white",
               fontWeight: 600,
               fontSize: "0.7rem",
@@ -155,7 +180,6 @@ export default function MiniPlayer() {
           </Typography>
         </Box>
 
-        {/* Control Buttons */}
         <Box sx={{ display: "flex", gap: 1 }}>
           <IconButton
             size="small"
@@ -190,7 +214,6 @@ export default function MiniPlayer() {
           </IconButton>
         </Box>
 
-        {/* Screen Reader Live Updates */}
         <Box
           ref={liveRef}
           sx={{ position: "absolute", left: -9999 }}

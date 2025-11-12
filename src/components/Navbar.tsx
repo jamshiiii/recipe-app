@@ -3,7 +3,6 @@ import {
   AppBar,
   Box,
   Button,
-  Container,
   IconButton,
   Menu,
   MenuItem,
@@ -24,54 +23,78 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) =>
     setAnchorEl(event.currentTarget);
-  };
   const handleMenuClose = () => setAnchorEl(null);
-
   const handleCreateClick = () => navigate("/create");
 
-  const navItems = [
-    { label: "Recipes", path: "/recipes" }
-    // { label: "Create", path: "/create" },
-  ];
+  const navItems = [{ label: "Recipes", path: "/recipes" }];
 
   return (
-    <Fade in timeout={800}>
+    <Fade in timeout={600}>
       <Paper
         elevation={3}
         sx={{
           position: "fixed",
-          top: 16,
+          top: 14,
           left: "50%",
           transform: "translateX(-50%)",
-          borderRadius: 4,
+          borderRadius: 10,
           px: 3,
           py: 1,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          width: { xs: "92%", sm: "80%", md: "100%" },
+          width: { xs: "92%", sm: "85%", md: "75%" },
           zIndex: 1200,
-          backdropFilter: "blur(10px)",
-          backgroundColor: "rgba(255,255,255,0.9)",
+          background:
+            "rgba(255, 255, 255, 0.7)",
+          backdropFilter: "blur(12px)",
+          boxShadow:
+            "0 8px 25px rgba(0, 0, 0, 0.06)",
+          border: "1px solid rgba(255,255,255,0.3)",
         }}
       >
         {/* Logo */}
-        <Typography
-          variant="h6"
+        <Box
+          onClick={() => navigate("/recipes")}
           sx={{
-            fontWeight: 600,
-            color: "#009688",
             display: "flex",
             alignItems: "center",
+            gap: 1,
             cursor: "pointer",
             userSelect: "none",
           }}
-          onClick={() => navigate("/recipes")}
         >
-          🍳&nbsp;Upliance Recipes
-        </Typography>
+          <Box
+            sx={{
+              background:
+                "linear-gradient(90deg, #00C2A8 0%, #00E0C3 100%)",
+              color: "#fff",
+              borderRadius: "50%",
+              width: 32,
+              height: 32,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 18,
+              fontWeight: 700,
+            }}
+          >
+            U
+          </Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              color: "#00B49B",
+              letterSpacing: 0.5,
+              fontFamily: "Poppins, sans-serif",
+            }}
+          >
+            Upliance Recipes
+          </Typography>
+        </Box>
 
         {/* Desktop Navigation */}
         {!isMobile ? (
@@ -84,13 +107,15 @@ const Navbar: React.FC = () => {
                 sx={{
                   color:
                     location.pathname === item.path
-                      ? theme.palette.primary.main
-                      : "text.primary",
-                  textTransform: "none",
+                      ? "#00C2A8"
+                      : "#333",
                   fontWeight:
                     location.pathname === item.path ? 600 : 400,
+                  textTransform: "none",
+                  fontFamily: "Inter, sans-serif",
                   "&:hover": {
-                    color: theme.palette.primary.main,
+                    color: "#00B49B",
+                    backgroundColor: "transparent",
                   },
                 }}
               >
@@ -102,18 +127,20 @@ const Navbar: React.FC = () => {
               variant="contained"
               onClick={handleCreateClick}
               sx={{
-                backgroundColor: "#009688",
+                background:
+                  "linear-gradient(90deg, #00C2A8 0%, #00E0C3 100%)",
                 color: "#fff",
-                borderRadius: 3,
+                borderRadius: 4,
                 textTransform: "none",
                 px: 2.5,
                 py: 1,
                 fontWeight: 500,
-                transition: "all 0.2s ease-in-out",
+                fontFamily: "Inter, sans-serif",
+                transition: "all 0.25s ease",
+                boxShadow: "0 3px 10px rgba(0,194,168,0.25)",
                 "&:hover": {
-                  backgroundColor: "#00796B",
                   transform: "translateY(-2px)",
-                  boxShadow: 4,
+                  boxShadow: "0 6px 20px rgba(0,194,168,0.35)",
                 },
               }}
             >
@@ -127,7 +154,7 @@ const Navbar: React.FC = () => {
               aria-label="menu"
               aria-controls={open ? "nav-menu" : undefined}
               aria-haspopup="true"
-              sx={{ color: "#009688" }}
+              sx={{ color: "#00C2A8" }}
             >
               <MenuIcon />
             </IconButton>
@@ -138,7 +165,14 @@ const Navbar: React.FC = () => {
               open={open}
               onClose={handleMenuClose}
               PaperProps={{
-                sx: { mt: 1.5, borderRadius: 2 },
+                sx: {
+                  mt: 1.5,
+                  borderRadius: 3,
+                  minWidth: 160,
+                  backgroundColor: "#fff",
+                  boxShadow:
+                    "0 8px 20px rgba(0,0,0,0.08)",
+                },
               }}
             >
               {navItems.map((item) => (
@@ -148,6 +182,15 @@ const Navbar: React.FC = () => {
                     navigate(item.path);
                     handleMenuClose();
                   }}
+                  sx={{
+                    color:
+                      location.pathname === item.path
+                        ? "#00B49B"
+                        : "#333",
+                    fontWeight:
+                      location.pathname === item.path ? 600 : 400,
+                    fontFamily: "Inter, sans-serif",
+                  }}
                 >
                   {item.label}
                 </MenuItem>
@@ -156,6 +199,10 @@ const Navbar: React.FC = () => {
                 onClick={() => {
                   handleMenuClose();
                   handleCreateClick();
+                }}
+                sx={{
+                  fontWeight: 500,
+                  color: "#00C2A8",
                 }}
               >
                 + Create Recipe

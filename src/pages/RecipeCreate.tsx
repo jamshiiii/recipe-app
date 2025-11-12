@@ -17,6 +17,8 @@ import {
   Grid,
   Tooltip,
   Divider,
+  useTheme,
+  Fade,
 } from '@mui/material';
 import { Difficulty, Ingredient, RecipeStep } from '../types';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,8 +29,10 @@ import { useToast } from '../components/ToastProvider';
 const difficulties: Difficulty[] = ['Easy', 'Medium', 'Hard'];
 
 export default function RecipeCreate() {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const { showToast } = useToast();
+
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty>('Easy');
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -122,248 +126,287 @@ export default function RecipeCreate() {
   };
 
   return (
-    <Box sx={{ maxWidth: 'auto', mx: 'auto', overflowY:'auto', height:"600px" }}>
-      <Typography variant="h5" mb={3} color="teal">
-        🧑‍🍳 Create a New Recipe
-      </Typography>
+    <Fade in timeout={600}>
+      <Box
+        sx={{
+          maxWidth: 'auto',
+          mx: 'auto',
+          mt: 4,
+          background: 'linear-gradient(180deg, #f9fffe 0%, #e6fffa 100%)',
+          borderRadius: 4,
+          p: { xs: 2, sm: 4 },
+          boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+        }}
+      >
+        <Typography
+          variant="h4"
+          mb={3}
+          sx={{
+            color: '#009688',
+            fontWeight: 700,
+            textAlign: 'center',
+            letterSpacing: 0.5,
+          }}
+        >
+          🧑‍🍳 Create a New Recipe
+        </Typography>
 
-      <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4 }}>
-        <Stack spacing={3}>
-          {/* Basic Info */}
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <TextField
-              label="Recipe Title"
-              value={title}
-              fullWidth
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <FormControl fullWidth>
-              <InputLabel>Difficulty</InputLabel>
-              <Select
-                value={difficulty}
-                label="Difficulty"
-                onChange={(e) => setDifficulty(e.target.value as Difficulty)}
-              >
-                {difficulties.map((d) => (
-                  <MenuItem key={d} value={d}>
-                    {d}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Stack>
-
-          <Divider />
-
-          {/* Ingredients Section */}
-          <Box>
-            <Typography variant="h6" color="teal" mb={1}>
-              Ingredients
-            </Typography>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="center" mb={2}>
-              <TextField label="Name" value={ingredientName} onChange={(e) => setIngredientName(e.target.value)} />
+        <Paper
+          sx={{
+            p: 3,
+            borderRadius: 3,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+            backgroundColor: '#ffffffb3',
+          }}
+        >
+          <Stack spacing={3}>
+            {/* Basic Info */}
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
-                label="Qty"
-                type="number"
-                value={ingredientQty}
-                onChange={(e) => setIngredientQty(Number(e.target.value))}
-                sx={{ width: 100 }}
+                label="Recipe Title"
+                value={title}
+                fullWidth
+                onChange={(e) => setTitle(e.target.value)}
               />
-              <TextField
-                label="Unit"
-                value={ingredientUnit}
-                onChange={(e) => setIngredientUnit(e.target.value)}
-                sx={{ width: 120 }}
-              />
-              <Button variant="contained"  onClick={addIngredient}>
-                Add
-              </Button>
+              <FormControl fullWidth>
+                <InputLabel>Difficulty</InputLabel>
+                <Select
+                  value={difficulty}
+                  label="Difficulty"
+                  onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+                >
+                  {difficulties.map((d) => (
+                    <MenuItem key={d} value={d}>
+                      {d}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Stack>
 
-            {ingredients.map((i) => (
-              <Paper
-                key={i.id}
-                sx={{
-                  p: 1.2,
-                  my: 0.5,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  borderRadius: 2,
-                  backgroundColor: 'rgba(0,128,128,0.05)',
-                }}
-              >
-                <Typography>
-                  {i.name} — {i.quantity}
-                  {i.unit}
-                </Typography>
-                <Tooltip title="Remove">
-                  <IconButton onClick={() => removeIngredient(i.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </Paper>
-            ))}
-          </Box>
+            <Divider />
 
-          <Divider />
-
-          {/* Steps Section */}
-          <Box>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-              <Typography variant="h6" color="teal">
-                Steps
+            {/* Ingredients Section */}
+            <Box>
+              <Typography variant="h6" color="#00796B" mb={1} fontWeight={600}>
+                Ingredients
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <Button variant="outlined"onClick={() => addStep('instruction')}>
-                  + Instruction
-                </Button>
-                <Button variant="contained"  onClick={() => addStep('cooking')}>
-                  + Cooking
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="center" mb={2}>
+                <TextField label="Name" value={ingredientName} onChange={(e) => setIngredientName(e.target.value)} />
+                <TextField
+                  label="Qty"
+                  type="number"
+                  value={ingredientQty}
+                  onChange={(e) => setIngredientQty(Number(e.target.value))}
+                  sx={{ width: 100 }}
+                />
+                <TextField
+                  label="Unit"
+                  value={ingredientUnit}
+                  onChange={(e) => setIngredientUnit(e.target.value)}
+                  sx={{ width: 120 }}
+                />
+                <Button variant="contained" sx={{ background: '#009688' }} onClick={addIngredient}>
+                  Add
                 </Button>
               </Stack>
-            </Stack>
 
-            <Stack spacing={2} mt={1}>
-              {steps.map((st, idx) => (
+              {ingredients.map((i) => (
                 <Paper
-                  key={st.id}
+                  key={i.id}
                   sx={{
-                    p: 2,
+                    p: 1.2,
+                    my: 0.5,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                     borderRadius: 2,
-                    boxShadow: 2,
-                    backgroundColor: 'rgba(0,128,128,0.03)',
-                    transition: '0.2s',
-                    '&:hover': { transform: 'translateY(-3px)', boxShadow: 4 },
+                    backgroundColor: '#e0f2f1',
                   }}
                 >
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label={`Step ${idx + 1} Description`}
-                        value={st.description}
-                        onChange={(e) => updateStep(st.id, { description: e.target.value })}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
-                      <TextField
-                        type="number"
-                        label="Duration (min)"
-                        value={st.durationMinutes}
-                        onChange={(e) =>
-                          updateStep(st.id, { durationMinutes: Math.max(1, Number(e.target.value) || 1) })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                      <Stack direction="row" spacing={1}>
-                        <FormControl sx={{ minWidth: 140 }}>
-                          <InputLabel>Type</InputLabel>
-                          <Select
-                            value={st.type}
-                            label="Type"
-                            onChange={(e) => {
-                              const t = e.target.value as any;
-                              updateStep(st.id, {
-                                type: t,
-                                cookingSettings:
-                                  t === 'cooking' ? { temperature: 180, speed: 1 } : undefined,
-                                ingredientIds:
-                                  t === 'instruction'
-                                    ? ingredients.length
-                                      ? [ingredients[0].id]
-                                      : []
-                                    : undefined,
-                              });
-                            }}
-                          >
-                            <MenuItem value="instruction">Instruction</MenuItem>
-                            <MenuItem value="cooking">Cooking</MenuItem>
-                          </Select>
-                        </FormControl>
-
-                        {st.type === 'instruction' && (
-                          <FormControl sx={{ minWidth: 160 }}>
-                            <InputLabel>Ingredient</InputLabel>
-                            <Select
-                              value={st.ingredientIds?.[0] || ''}
-                              label="Ingredient"
-                              onChange={(e) =>
-                                updateStep(st.id, { ingredientIds: [e.target.value as string] })
-                              }
-                            >
-                              {ingredients.map((i) => (
-                                <MenuItem key={i.id} value={i.id}>
-                                  {i.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-
-                        {st.type === 'cooking' && (
-                          <Stack direction="row" spacing={1}>
-                            <TextField
-                              label="Temp °C"
-                              type="number"
-                              value={st.cookingSettings?.temperature ?? 180}
-                              onChange={(e) =>
-                                updateStep(st.id, {
-                                  cookingSettings: {
-                                    ...st.cookingSettings!,
-                                    temperature: Number(e.target.value),
-                                  },
-                                })
-                              }
-                              sx={{ width: 100 }}
-                            />
-                            <TextField
-                              label="Speed"
-                              type="number"
-                              value={st.cookingSettings?.speed ?? 1}
-                              onChange={(e) =>
-                                updateStep(st.id, {
-                                  cookingSettings: {
-                                    ...st.cookingSettings!,
-                                    speed: Number(e.target.value),
-                                  },
-                                })
-                              }
-                              sx={{ width: 80 }}
-                            />
-                          </Stack>
-                        )}
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Stack direction="row" justifyContent="flex-end" spacing={1}>
-                        <IconButton onClick={() => moveStep(idx, 'up')} disabled={idx === 0}>
-                          <ArrowUpward />
-                        </IconButton>
-                        <IconButton onClick={() => moveStep(idx, 'down')} disabled={idx === steps.length - 1}>
-                          <ArrowDownward />
-                        </IconButton>
-                        <IconButton onClick={() => setSteps((prev) => prev.filter((s) => s.id !== st.id))}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Stack>
-                    </Grid>
-                  </Grid>
+                  <Typography fontWeight={500} color="#004d40">
+                    {i.name} — {i.quantity}
+                    {i.unit}
+                  </Typography>
+                  <Tooltip title="Remove">
+                    <IconButton color="error" onClick={() => removeIngredient(i.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Paper>
               ))}
-            </Stack>
-          </Box>
+            </Box>
 
-          <Divider />
+            <Divider />
 
-          <Box textAlign="right">
-            <Button variant="contained"  size="large" onClick={save}>
-              💾 Save Recipe
-            </Button>
-          </Box>
-        </Stack>
-      </Paper>
-    </Box>
+            {/* Steps Section */}
+            <Box>
+              <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                <Typography variant="h6" color="#00796B" fontWeight={600}>
+                  Steps
+                </Typography>
+                <Stack direction="row" spacing={1}>
+                  <Button variant="outlined" onClick={() => addStep('instruction')}>
+                    + Instruction
+                  </Button>
+                  <Button variant="contained" sx={{ background: '#009688' }} onClick={() => addStep('cooking')}>
+                    + Cooking
+                  </Button>
+                </Stack>
+              </Stack>
+
+              <Stack spacing={2} mt={1}>
+                {steps.map((st, idx) => (
+                  <Paper
+                    key={st.id}
+                    sx={{
+                      p: 2,
+                      borderRadius: 2,
+                      boxShadow: 2,
+                      backgroundColor: '#fafafa',
+                      border: '1px solid #b2dfdb',
+                      '&:hover': { transform: 'translateY(-3px)', transition: '0.2s' },
+                    }}
+                  >
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <TextField
+                          fullWidth
+                          label={`Step ${idx + 1} Description`}
+                          value={st.description}
+                          onChange={(e) => updateStep(st.id, { description: e.target.value })}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={2}>
+                        <TextField
+                          type="number"
+                          label="Duration (min)"
+                          value={st.durationMinutes}
+                          onChange={(e) =>
+                            updateStep(st.id, { durationMinutes: Math.max(1, Number(e.target.value) || 1) })
+                          }
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
+                        <Stack direction="row" spacing={1}>
+                          <FormControl sx={{ minWidth: 140 }}>
+                            <InputLabel>Type</InputLabel>
+                            <Select
+                              value={st.type}
+                              label="Type"
+                              onChange={(e) => {
+                                const t = e.target.value as any;
+                                updateStep(st.id, {
+                                  type: t,
+                                  cookingSettings:
+                                    t === 'cooking' ? { temperature: 180, speed: 1 } : undefined,
+                                  ingredientIds:
+                                    t === 'instruction'
+                                      ? ingredients.length
+                                        ? [ingredients[0].id]
+                                        : []
+                                      : undefined,
+                                });
+                              }}
+                            >
+                              <MenuItem value="instruction">Instruction</MenuItem>
+                              <MenuItem value="cooking">Cooking</MenuItem>
+                            </Select>
+                          </FormControl>
+
+                          {st.type === 'instruction' && (
+                            <FormControl sx={{ minWidth: 160 }}>
+                              <InputLabel>Ingredient</InputLabel>
+                              <Select
+                                value={st.ingredientIds?.[0] || ''}
+                                label="Ingredient"
+                                onChange={(e) =>
+                                  updateStep(st.id, { ingredientIds: [e.target.value as string] })
+                                }
+                              >
+                                {ingredients.map((i) => (
+                                  <MenuItem key={i.id} value={i.id}>
+                                    {i.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          )}
+
+                          {st.type === 'cooking' && (
+                            <Stack direction="row" spacing={1}>
+                              <TextField
+                                label="Temp °C"
+                                type="number"
+                                value={st.cookingSettings?.temperature ?? 180}
+                                onChange={(e) =>
+                                  updateStep(st.id, {
+                                    cookingSettings: {
+                                      ...st.cookingSettings!,
+                                      temperature: Number(e.target.value),
+                                    },
+                                  })
+                                }
+                                sx={{ width: 100 }}
+                              />
+                              <TextField
+                                label="Speed"
+                                type="number"
+                                value={st.cookingSettings?.speed ?? 1}
+                                onChange={(e) =>
+                                  updateStep(st.id, {
+                                    cookingSettings: {
+                                      ...st.cookingSettings!,
+                                      speed: Number(e.target.value),
+                                    },
+                                  })
+                                }
+                                sx={{ width: 80 }}
+                              />
+                            </Stack>
+                          )}
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                          <IconButton onClick={() => moveStep(idx, 'up')} disabled={idx === 0}>
+                            <ArrowUpward />
+                          </IconButton>
+                          <IconButton onClick={() => moveStep(idx, 'down')} disabled={idx === steps.length - 1}>
+                            <ArrowDownward />
+                          </IconButton>
+                          <IconButton color="error" onClick={() => setSteps((prev) => prev.filter((s) => s.id !== st.id))}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                ))}
+              </Stack>
+            </Box>
+
+            <Divider />
+
+            <Box textAlign="right">
+              <Button
+                variant="contained"
+                size="large"
+                sx={{
+                  background: 'linear-gradient(90deg, #009688 0%, #00796B 100%)',
+                  borderRadius: 3,
+                  fontWeight: 600,
+                  px: 3,
+                  py: 1,
+                }}
+                onClick={save}
+              >
+                💾 Save Recipe
+              </Button>
+            </Box>
+          </Stack>
+        </Paper>
+      </Box>
+    </Fade>
   );
 }
