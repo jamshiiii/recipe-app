@@ -65,6 +65,7 @@ export default function CookPage() {
         dispatch(tickSecond({ recipeId: id, nowTs: Date.now() }) as any);
       }, 1000);
     }
+    
     return () => {
       if (intervalRef.current) {
         window.clearInterval(intervalRef.current);

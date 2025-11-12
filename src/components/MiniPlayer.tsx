@@ -45,11 +45,11 @@ export default function MiniPlayer() {
       return;
     }
 
-    if (!intervalRef.current) {
-      intervalRef.current = window.setInterval(() => {
-        dispatch(tickSecond({ recipeId: activeId, nowTs: Date.now() }) as any);
-      }, 1000);
-    }
+    // if (!intervalRef.current) {
+    //   intervalRef.current = window.setInterval(() => {
+    //     dispatch(tickSecond({ recipeId: activeId, nowTs: Date.now() }) as any);
+    //   }, 1000);
+    // }
 
     return () => {
       if (intervalRef.current) {
@@ -155,7 +155,7 @@ export default function MiniPlayer() {
           </Typography>
         </Box>
 
-        <Box sx={{ position: "relative", display: "flex", alignItems: "center"  }}>
+        {/* <Box sx={{ position: "relative", display: "flex", alignItems: "center"  }}>
           <CircularProgress
             size={46}
             thickness={5}
@@ -178,6 +178,56 @@ export default function MiniPlayer() {
           >
             {stepProgress}%
           </Typography>
+        </Box> */}
+
+        <Box
+          sx={{
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {by?.isRunning ? (
+            <CircularProgress
+              size={46}
+              thickness={5}
+              color="inherit"
+              sx={{
+                animationDuration: "800ms",
+                opacity: 0.9,
+
+              }}
+
+            />
+          ) : (
+          
+            <>
+              <CircularProgress
+                size={46}
+                thickness={5}
+                variant="determinate"
+                value={stepProgress}
+                sx={{
+                  color: "white",
+                  opacity: 0.8,
+                }}
+
+                
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  position: "absolute",
+                  color: "white",
+                  fontWeight: 600,
+                  fontSize: "0.7rem",
+                }}
+              >
+                {stepProgress}%
+              </Typography>
+            </>
+          )}
         </Box>
 
         <Box sx={{ display: "flex", gap: 1 }}>
